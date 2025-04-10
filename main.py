@@ -8,6 +8,7 @@ class ElectroLexApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false, // 👈 Add this line
       title: 'ElectroLex',
       theme: ThemeData(
         scaffoldBackgroundColor: Color(0xFFEAF4FF),
