@@ -4,17 +4,31 @@ void main() {
   runApp(ElectroLexApp());
 }
 
+final ValueNotifier<bool> isDarkMode = ValueNotifier(false);
+
 class ElectroLexApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false, // 👈 Add this line
-      title: 'ElectroLex',
-      theme: ThemeData(
-        scaffoldBackgroundColor: Color(0xFFEAF4FF),
-        primarySwatch: Colors.blue,
-      ),
-      home: ElectroLexHome(),
+    return ValueListenableBuilder<bool>(
+      valueListenable: isDarkMode,
+      builder: (context, darkMode, _) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'ElectroLex',
+          theme: ThemeData(
+            brightness: Brightness.light,
+            scaffoldBackgroundColor: Color(0xFFEAF4FF),
+            primarySwatch: Colors.blue,
+          ),
+          darkTheme: ThemeData(
+            brightness: Brightness.dark,
+            scaffoldBackgroundColor: Colors.grey[900],
+            primarySwatch: Colors.blue,
+          ),
+          themeMode: darkMode ? ThemeMode.dark : ThemeMode.light,
+          home: ElectroLexHome(),
+        );
+      },
     );
   }
 }
@@ -41,7 +55,6 @@ class _ElectroLexHomeState extends State<ElectroLexHome> {
     {'title': 'Switches', 'icon': Icons.toggle_on, 'color': Colors.lightBlue},
     {'title': 'Fuses', 'icon': Icons.power_off, 'color': Colors.redAccent},
     {'title': 'Others', 'icon': Icons.more_horiz, 'color': Colors.grey},
-
   ];
 
   final List<Map<String, dynamic>> othersComponents = [
@@ -79,11 +92,9 @@ class _ElectroLexHomeState extends State<ElectroLexHome> {
 
   List<Map<String, dynamic>> get filteredComponents {
     return allComponents
-        .where((component) =>
-        component['title'].toLowerCase().contains(_searchQuery.toLowerCase()))
+        .where((component) => component['title'].toLowerCase().contains(_searchQuery.toLowerCase()))
         .toList();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -106,55 +117,29 @@ class _ElectroLexHomeState extends State<ElectroLexHome> {
                     child: Center(
                       child: Text(
                         'EL',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                        ),
+                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
                       ),
                     ),
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    "ElectroLex",
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w900,
-                      color: Colors.black,
-                    ),
-                  ),
+                  Text("ElectroLex", style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900)),
                   const SizedBox(height: 4),
-                  Text(
-                    "Electronics Components Reference Tools",
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[700],
-                    ),
-                  ),
+                  Text("Electronics Components Reference Tools", style: TextStyle(fontSize: 14, color: Colors.grey[700])),
                 ],
               ),
               const SizedBox(height: 24),
               Container(
                 width: 380,
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(25),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 4,
-                      offset: Offset(0, 2),
-                    ),
-                  ],
+                  boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
                 ),
                 padding: EdgeInsets.all(4),
                 child: TabBar(
                   labelColor: Colors.black,
                   unselectedLabelColor: Colors.grey,
-                  indicator: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(25),
-                  ),
+                  indicator: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(25)),
                   indicatorColor: Colors.transparent,
                   indicatorSize: TabBarIndicatorSize.tab,
                   dividerColor: Colors.transparent,
@@ -171,7 +156,7 @@ class _ElectroLexHomeState extends State<ElectroLexHome> {
                   children: [
                     _buildHomeTab(context),
                     _buildSearchTab(),
-                    const Center(child: Text('Settings Page')),
+                    _buildSettingsTab(),
                   ],
                 ),
               ),
@@ -204,20 +189,18 @@ class _ElectroLexHomeState extends State<ElectroLexHome> {
                   if (category['title'] == 'Others') {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                          builder: (_) => OthersCategoryPage(othersComponents)),
+                      MaterialPageRoute(builder: (_) => OthersCategoryPage(othersComponents)),
                     );
                   } else {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                          builder: (_) => ComponentDetailPage(category['title'])),
+                      MaterialPageRoute(builder: (_) => ComponentDetailPage(category['title'])),
                     );
                   }
                 },
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Theme.of(context).cardColor,
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
                   ),
@@ -227,15 +210,11 @@ class _ElectroLexHomeState extends State<ElectroLexHome> {
                       Container(
                         width: 48,
                         height: 48,
-                        decoration: BoxDecoration(
-                          color: category['color'],
-                          shape: BoxShape.circle,
-                        ),
+                        decoration: BoxDecoration(color: category['color'], shape: BoxShape.circle),
                         child: Icon(category['icon'], color: Colors.white, size: 28),
                       ),
                       const SizedBox(height: 8),
-                      Text(category['title'],
-                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      Text(category['title'], style: TextStyle(fontWeight: FontWeight.bold)),
                     ],
                   ),
                 ),
@@ -263,7 +242,7 @@ class _ElectroLexHomeState extends State<ElectroLexHome> {
               hintText: 'Search components...',
               prefixIcon: Icon(Icons.search),
               filled: true,
-              fillColor: Colors.white,
+              fillColor: Theme.of(context).cardColor,
               contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 16),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(30),
@@ -286,13 +265,12 @@ class _ElectroLexHomeState extends State<ElectroLexHome> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                        builder: (_) => ComponentDetailPage(item['title'])),
+                    MaterialPageRoute(builder: (_) => ComponentDetailPage(item['title'])),
                   );
                 },
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Theme.of(context).cardColor,
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
                   ),
@@ -302,10 +280,7 @@ class _ElectroLexHomeState extends State<ElectroLexHome> {
                       Container(
                         width: 48,
                         height: 48,
-                        decoration: BoxDecoration(
-                          color: item['color'],
-                          shape: BoxShape.circle,
-                        ),
+                        decoration: BoxDecoration(color: item['color'], shape: BoxShape.circle),
                         child: Icon(item['icon'], color: Colors.white, size: 28),
                       ),
                       const SizedBox(height: 8),
@@ -313,8 +288,7 @@ class _ElectroLexHomeState extends State<ElectroLexHome> {
                         padding: const EdgeInsets.symmetric(horizontal: 6),
                         child: Text(item['title'],
                             textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 12)),
+                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                       ),
                     ],
                   ),
@@ -326,6 +300,26 @@ class _ElectroLexHomeState extends State<ElectroLexHome> {
       ],
     );
   }
+
+  Widget _buildSettingsTab() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 1),
+          SwitchListTile(
+            title: Text("Dark Mode"),
+            value: isDarkMode.value,
+            onChanged: (val) {
+              isDarkMode.value = val;
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
 }
 
 class ComponentDetailPage extends StatelessWidget {
@@ -365,13 +359,12 @@ class OthersCategoryPage extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (_) => ComponentDetailPage(item['title'])),
+                  MaterialPageRoute(builder: (_) => ComponentDetailPage(item['title'])),
                 );
               },
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
                 ),
@@ -381,10 +374,7 @@ class OthersCategoryPage extends StatelessWidget {
                     Container(
                       width: 48,
                       height: 48,
-                      decoration: BoxDecoration(
-                        color: item['color'],
-                        shape: BoxShape.circle,
-                      ),
+                      decoration: BoxDecoration(color: item['color'], shape: BoxShape.circle),
                       child: Icon(item['icon'], color: Colors.white, size: 28),
                     ),
                     const SizedBox(height: 8),
