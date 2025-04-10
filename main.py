@@ -303,17 +303,46 @@ class _ElectroLexHomeState extends State<ElectroLexHome> {
 
   Widget _buildSettingsTab() {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16), // less top padding (was 16)
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 1),
-          SwitchListTile(
-            title: Text("Dark Mode"),
-            value: isDarkMode.value,
-            onChanged: (val) {
-              isDarkMode.value = val;
-            },
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: Theme.of(context).cardColor,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 6,
+                  offset: Offset(0, 2),
+                ),
+              ],
+              border: Border.all(
+                color: Colors.grey.withOpacity(0.3),
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Dark Mode",
+                  style: TextStyle(fontSize: 16),
+                ),
+                IconButton(
+                  icon: Icon(
+                    isDarkMode.value ? Icons.dark_mode : Icons.wb_sunny,
+                    color: isDarkMode.value ? Colors.amber : Colors.blueGrey,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      isDarkMode.value = !isDarkMode.value;
+                    });
+                  },
+                ),
+              ],
+            ),
           ),
         ],
       ),
